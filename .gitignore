@@ -1,0 +1,17 @@
+# Patient-level data must never be committed
+HE_*.dta
+*.dta
+!data/aaaft_example.dta
+
+# Outputs
+output/
+*.csv
+*.log
+*.smcl
+
+# Notebooks and system files
+.ipynb_checkpoints/
+__pycache__/
+.DS_Store
+Thumbs.db
+desktop.ini

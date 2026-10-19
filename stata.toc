@@ -1,0 +1,4 @@
+v 3
+d aaaft: rank-based IV inference for accelerated failure time models
+d Leonardo Sanchez-Aragon, Anand Acharya, Kusum Menon, and Marcel Voia
+p aaaft Rank-based IV inference for AFT duration models with weak instruments

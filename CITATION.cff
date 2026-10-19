@@ -1,0 +1,48 @@
+cff-version: 1.2.0
+message: "If you use aaaft, please cite it as below."
+title: "aaaft: Rank-based instrumental variables inference for accelerated failure time models in Stata"
+version: 1.0.0
+date-released: 2026-10-19
+license: MIT
+repository-code: "https://github.com/lfsanche/aaaft"
+keywords:
+  - Stata
+  - instrumental variables
+  - weak instruments
+  - duration models
+  - accelerated failure time
+  - rank inference
+authors:
+  - family-names: "Sánchez-Aragón"
+    given-names: "Leonardo"
+    affiliation: "ESPOL Polytechnic University"
+    email: "lfsanche@espol.edu.ec"
+  - family-names: "Acharya"
+    given-names: "Anand"
+    affiliation: "Carleton University"
+  - family-names: "Menon"
+    given-names: "Kusum"
+    affiliation: "University of Ottawa"
+    email: "KMenon@cheo.on.ca"
+  - family-names: "Voia"
+    given-names: "Marcel"
+    affiliation: "Université d'Orléans and University of Bucharest"
+    email: "marcel.voia@univ-orleans.fr"
+references:
+  - type: article
+    title: "Robust Duration Inference and Bias in Allocating Critical Hospital Resources"
+    journal: "Canadian Journal of Economics"
+    year: 2026
+    authors:
+      - family-names: "Acharya"
+        given-names: "Anand"
+      - family-names: "Khalaf"
+        given-names: "Lynda"
+      - family-names: "Menon"
+        given-names: "Kusum"
+      - family-names: "Voia"
+        given-names: "Marcel"
+      - family-names: "Yazbeck"
+        given-names: "Myra"
+      - family-names: "Wensley"
+        given-names: "David"

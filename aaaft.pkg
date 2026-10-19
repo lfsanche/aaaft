@@ -1,0 +1,23 @@
+v 3
+d aaaft: rank-based IV inference for accelerated failure time models
+d
+d Estimates the effect of an endogenous treatment on a duration in an
+d accelerated failure time model with a binary instrument. Reports
+d Hodges-Lehmann-Sen estimates and simulated rank confidence sets that are
+d exact and robust to weak instruments, a least squares IV comparator, and a
+d rank only benchmark without the instrument.
+d
+d Requires: Stata 14 and moremata (ssc install moremata)
+d
+d Authors: Leonardo Sanchez-Aragon (ESPOL), Anand Acharya (Carleton, deceased),
+d Kusum Menon (University of Ottawa), Marcel Voia (Universite d'Orleans)
+d Contact: lfsanche@espol.edu.ec
+d
+d Distribution-Date: 20261019
+d Version: 1.0.0
+d
+f aaaft.ado
+f aaaft_export.ado
+f aaaft.sthlp
+a examples/aaaft_example.do
+a data/aaaft_example.dta
