@@ -1,8 +1,8 @@
 * running_example.do
-* Replication example for the aaaft command (Stata Journal).
+* Replication example for the aaivaft command (Stata Journal).
 * Estimates the effect of illness severity on ICU length of stay for PRISM
 * and PIM, with and without the trauma instrument, and exports the IV results.
-* Requires aaaft.ado and aaaft_export.ado (version 1.0.0 or later).
+* Requires aaivaft.ado and aaivaft_export.ado (version 1.0.0 or later).
 * Run calibrate_fo.do first: it creates fo_PRISM.dta and fo_PIM.dta,
 * the error draws for the empirical quantile score.
 
@@ -26,13 +26,13 @@ local sim   reps(5000) seed(12345)
 * PRISM
 * -------------------------------------------------------------------
 * IV estimates with the empirical quantile score, exported to PRISM_iv.csv
-aaaft lnlosh PRISM `covs', instrument(Trauma) `grid' `sim' ///
+aaivaft lnlosh PRISM `covs', instrument(Trauma) `grid' `sim' ///
     fo("fo_PRISM.dta") export("PRISM_iv.csv")
 estimates store prism_iv
 scalar prism_iv = e(HLS_logistic)
 
 * Rank-only benchmark, no instrument
-aaaft lnlosh PRISM `covs', `grid'
+aaivaft lnlosh PRISM `covs', `grid'
 estimates store prism_noiv
 scalar prism_noiv = e(HLS_logistic)
 
@@ -40,13 +40,13 @@ scalar prism_noiv = e(HLS_logistic)
 * PIM
 * -------------------------------------------------------------------
 * IV estimates with the empirical quantile score, exported to PIM_iv.csv
-aaaft lnlosh PIM `covs', instrument(Trauma) `grid' `sim' ///
+aaivaft lnlosh PIM `covs', instrument(Trauma) `grid' `sim' ///
     fo("fo_PIM.dta") export("PIM_iv.csv")
 estimates store pim_iv
 scalar pim_iv = e(HLS_logistic)
 
 * Rank-only benchmark, no instrument
-aaaft lnlosh PIM `covs', `grid'
+aaivaft lnlosh PIM `covs', `grid'
 estimates store pim_noiv
 scalar pim_noiv = e(HLS_logistic)
 
@@ -70,8 +70,8 @@ di as txt "PIM    IV = " as res %6.3f pim_iv ///
 * -------------------------------------------------------------------
 * Read back the exported results
 * -------------------------------------------------------------------
-* export() calls aaaft_export. It can also be run by itself after an
-* estimation, for example: aaaft_export using PRISM_iv.csv, replace
+* export() calls aaivaft_export. It can also be run by itself after an
+* estimation, for example: aaivaft_export using PRISM_iv.csv, replace
 preserve
 import delimited using "PRISM_iv.csv", clear
 list score hls rank_lo rank_hi ls_point ls_lo ls_hi, noobs

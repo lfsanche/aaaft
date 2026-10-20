@@ -1,10 +1,10 @@
 *! version 1.0.0  19oct2026
-*! aaaft: rank-based IV inference for accelerated failure time models
+*! aaivaft: rank-based IV inference for accelerated failure time models
 *! Authors: Sanchez-Aragon, Acharya, Menon, and Voia
 *! Based on: Acharya, Khalaf, Menon, Voia, Yazbeck, and Wensley (2026), Canadian Journal of Economics, forthcoming
-*! Requires: moremata (ssc install moremata) and aaaft_export.ado
+*! Requires: moremata (ssc install moremata) and aaivaft_export.ado
 
-program define aaaft, rclass
+program define aaivaft, rclass
 	version 14.0
 
 	syntax varlist(min=2 numeric) 		///
@@ -59,8 +59,8 @@ program define aaaft, rclass
 			exit 2001
 		}
 		local fo_n = r(N)
-		mata: _aaaft_fodraws = st_data(., "`fovar'")
-		mata: _aaaft_fodraws = select(_aaaft_fodraws, _aaaft_fodraws :< .)
+		mata: _aaivaft_fodraws = st_data(., "`fovar'")
+		mata: _aaivaft_fodraws = select(_aaivaft_fodraws, _aaivaft_fodraws :< .)
 		restore
 		local has_fo 1
 	}
@@ -171,7 +171,7 @@ program define aaaft, rclass
 	// Header
 	// -------------------------------------------------------------------------
 	di _n as txt "{hline 60}"
-	di as txt " Rank IV inference for AFT duration models (aaaft)"
+	di as txt " Rank IV inference for AFT duration models (aaivaft)"
 	di as txt "{hline 60}"
 	di as txt " Dependent variable  : " as res "`depvar'"
 	di as txt " Treatment variable  : " as res "`treatvar'"
@@ -194,21 +194,21 @@ program define aaaft, rclass
 	// -------------------------------------------------------------------------
 	// Build matrices for Mata
 	// -------------------------------------------------------------------------
-	tempname _aaaft_y _aaaft_Y _aaaft_X
+	tempname _aaivaft_y _aaivaft_Y _aaivaft_X
 
 	quietly {
-		mkmat `depvar'   if `touse', matrix(`_aaaft_y')
-		mkmat `treatvar' if `touse', matrix(`_aaaft_Y')
+		mkmat `depvar'   if `touse', matrix(`_aaivaft_y')
+		mkmat `treatvar' if `touse', matrix(`_aaivaft_Y')
 
 		local first_cov : word 1 of `covvars'
-		mkmat `first_cov' if `touse', matrix(`_aaaft_X')
+		mkmat `first_cov' if `touse', matrix(`_aaivaft_X')
 		local ncov : word count `covvars'
 		if `ncov' > 1 {
 			forvalues i = 2/`ncov' {
 				local cv : word `i' of `covvars'
 				tempname _tmp
 				mkmat `cv' if `touse', matrix(`_tmp')
-				matrix `_aaaft_X' = `_aaaft_X', `_tmp'
+				matrix `_aaivaft_X' = `_aaivaft_X', `_tmp'
 			}
 		}
 	}
@@ -233,15 +233,15 @@ program define aaaft, rclass
 
 	// Build instrument matrix once — used by both rank and LS blocks
 	if `has_inst' {
-		tempname _aaaft_z
-		quietly mkmat `instrument' if `touse', matrix(`_aaaft_z')
+		tempname _aaivaft_z
+		quietly mkmat `instrument' if `touse', matrix(`_aaivaft_z')
 	}
 
-	scalar _aaaft_gmin  = `gridmin'
-	scalar _aaaft_gmax  = `gridmax'
-	scalar _aaaft_gstep = `gridstep'
-	scalar _aaaft_reps  = `reps'
-	scalar _aaaft_level = `level'
+	scalar _aaivaft_gmin  = `gridmin'
+	scalar _aaivaft_gmax  = `gridmax'
+	scalar _aaivaft_gstep = `gridstep'
+	scalar _aaivaft_reps  = `reps'
+	scalar _aaivaft_level = `level'
 
 	// -------------------------------------------------------------------------
 	// Rank estimator
@@ -258,29 +258,29 @@ program define aaaft, rclass
 		di as txt _n " Computing rank estimates..."
 
 		if `has_inst' {
-			mata: _aaaft_rankinf(		///
-				"`_aaaft_y'",			///
-				"`_aaaft_Y'",			///
-				"`_aaaft_z'",			///
-				"`_aaaft_X'",			///
-				"_aaaft_gmin",			///
-				"_aaaft_gmax",			///
-				"_aaaft_gstep",			///
-				"_aaaft_reps",			///
-				"_aaaft_level",			///
+			mata: _aaivaft_rankinf(		///
+				"`_aaivaft_y'",			///
+				"`_aaivaft_Y'",			///
+				"`_aaivaft_z'",			///
+				"`_aaivaft_X'",			///
+				"_aaivaft_gmin",			///
+				"_aaivaft_gmax",			///
+				"_aaivaft_gstep",			///
+				"_aaivaft_reps",			///
+				"_aaivaft_level",			///
 				`has_fo',				///
 				`=("`zcenter'" == "")'	///
 			)
 		}
 		else {
 			// No-IV version: uses treatment directly (OLS-rank)
-			mata: _aaaft_rankinf_noinst(	///
-				"`_aaaft_y'",				///
-				"`_aaaft_Y'",				///
-				"`_aaaft_X'",				///
-				"_aaaft_gmin",				///
-				"_aaaft_gmax",				///
-				"_aaaft_gstep"				///
+			mata: _aaivaft_rankinf_noinst(	///
+				"`_aaivaft_y'",				///
+				"`_aaivaft_Y'",				///
+				"`_aaivaft_X'",				///
+				"_aaivaft_gmin",				///
+				"_aaivaft_gmax",				///
+				"_aaivaft_gstep"				///
 			)
 		}
 	}
@@ -311,13 +311,13 @@ program define aaaft, rclass
 	// -------------------------------------------------------------------------
 	if `has_inst' & "`ls'" == "" {
 		di as txt _n " Computing least-squares IV confidence sets..."
-		mata: _aaaft_leastsquares(		///
-			"`_aaaft_y'",				///
-			"`_aaaft_Y'",				///
-			"`_aaaft_z'",				///
-			"`_aaaft_X'",				///
-			"_aaaft_reps",				///
-			"_aaaft_level"				///
+		mata: _aaivaft_leastsquares(		///
+			"`_aaivaft_y'",				///
+			"`_aaivaft_Y'",				///
+			"`_aaivaft_z'",				///
+			"`_aaivaft_X'",				///
+			"_aaivaft_reps",				///
+			"_aaivaft_level"				///
 		)
 	}
 
@@ -482,11 +482,11 @@ program define aaaft, rclass
 	}
 	di as txt "{hline 60}"
 
-	scalar drop _aaaft_gmin _aaaft_gmax _aaaft_gstep _aaaft_reps _aaaft_level
+	scalar drop _aaivaft_gmin _aaivaft_gmax _aaivaft_gstep _aaivaft_reps _aaivaft_level
 
 	// -------------------------------------------------------------------------
 	// Delegate ereturn post to eclass helper (avoids r(151) conflict)
-	// Values are passed via fixed-name global scalars (prefix _aaaft_ep_)
+	// Values are passed via fixed-name global scalars (prefix _aaivaft_ep_)
 	// to avoid the tempname-expansion problem in option parsing.
 	// -------------------------------------------------------------------------
 	local do_rank = ("`rank'" == "")
@@ -497,42 +497,42 @@ program define aaaft, rclass
 	}
 	else {
 		// Stage results in fixed-name scalars for the helper to read
-		scalar _aaaft_ep_hls_l  = `_hls_bl'
-		scalar _aaaft_ep_hls_g  = `_hls_bg'
-		scalar _aaaft_ep_hls_e  = `_hls_be'
-		scalar _aaaft_ep_ci_l_l = `_ci_l_l'
-		scalar _aaaft_ep_ci_u_l = `_ci_u_l'
-		scalar _aaaft_ep_ci_l_g = `_ci_l_g'
-		scalar _aaaft_ep_ci_u_g = `_ci_u_g'
-		scalar _aaaft_ep_ci_l_e = `_ci_l_e'
-		scalar _aaaft_ep_ci_u_e = `_ci_u_e'
-		scalar _aaaft_ep_nobs    = `nobs'
-		scalar _aaaft_ep_has_inst = `has_inst'
-		scalar _aaaft_ep_do_ls   = `do_ls'
-		scalar _aaaft_ep_ls_b    = `_ls_b'
-		scalar _aaaft_ep_do_rank = `do_rank'
-		scalar _aaaft_ep_level   = `level'
+		scalar _aaivaft_ep_hls_l  = `_hls_bl'
+		scalar _aaivaft_ep_hls_g  = `_hls_bg'
+		scalar _aaivaft_ep_hls_e  = `_hls_be'
+		scalar _aaivaft_ep_ci_l_l = `_ci_l_l'
+		scalar _aaivaft_ep_ci_u_l = `_ci_u_l'
+		scalar _aaivaft_ep_ci_l_g = `_ci_l_g'
+		scalar _aaivaft_ep_ci_u_g = `_ci_u_g'
+		scalar _aaivaft_ep_ci_l_e = `_ci_l_e'
+		scalar _aaivaft_ep_ci_u_e = `_ci_u_e'
+		scalar _aaivaft_ep_nobs    = `nobs'
+		scalar _aaivaft_ep_has_inst = `has_inst'
+		scalar _aaivaft_ep_do_ls   = `do_ls'
+		scalar _aaivaft_ep_ls_b    = `_ls_b'
+		scalar _aaivaft_ep_do_rank = `do_rank'
+		scalar _aaivaft_ep_level   = `level'
 		foreach s in l g e q {
-			scalar _aaaft_ep_cr_lo_`s' = `_cr_lo_`s''
-			scalar _aaaft_ep_cr_hi_`s' = `_cr_hi_`s''
+			scalar _aaivaft_ep_cr_lo_`s' = `_cr_lo_`s''
+			scalar _aaivaft_ep_cr_hi_`s' = `_cr_hi_`s''
 		}
-		scalar _aaaft_ep_hls_q  = `_hls_bq'
-		scalar _aaaft_ep_has_fo = `has_fo'
-		global AAAFT_ep_fo `"`fo'"'
+		scalar _aaivaft_ep_hls_q  = `_hls_bq'
+		scalar _aaivaft_ep_has_fo = `has_fo'
+		global AAIVAFT_ep_fo `"`fo'"'
 
-		_aaaft_epost `depvar' `treatvar' `instrument' `touse'
+		_aaivaft_epost `depvar' `treatvar' `instrument' `touse'
 	}
 
 	// Drop the stored draws and the staged file name
-	capture mata: mata drop _aaaft_fodraws
-	global AAAFT_ep_fo
+	capture mata: mata drop _aaivaft_fodraws
+	global AAIVAFT_ep_fo
 
     // -------------------------------------------------------------------------
-    // Optional export to .csv (calls aaaft_export.ado; reads e())
+    // Optional export to .csv (calls aaivaft_export.ado; reads e())
     // -------------------------------------------------------------------------
     if `"`export'"' != "" {
         if `do_rank' | `do_ls' {
-            aaaft_export using `"`export'"', replace
+            aaivaft_export using `"`export'"', replace
         }
         else {
             di as txt " Note: nothing posted to e(); export() skipped."
@@ -543,55 +543,55 @@ end
 
 
 // =============================================================================
-// eclass helper: posts results to e() — called at end of aaaft
-// Reads values from fixed-name scalars _aaaft_ep_* set by the caller.
+// eclass helper: posts results to e() — called at end of aaivaft
+// Reads values from fixed-name scalars _aaivaft_ep_* set by the caller.
 // Positional args: depvar treatvar [instrument] touse
 // =============================================================================
-program define _aaaft_epost, eclass
+program define _aaivaft_epost, eclass
 	version 14.0
 
 	args depvar treatvar instrument touse
 
 	// Read staged scalars
-	local nobs     = scalar(_aaaft_ep_nobs)
-	local has_inst = scalar(_aaaft_ep_has_inst)
-	local do_ls    = scalar(_aaaft_ep_do_ls)
-	local do_rank  = scalar(_aaaft_ep_do_rank)
-	local lvl      = scalar(_aaaft_ep_level)
+	local nobs     = scalar(_aaivaft_ep_nobs)
+	local has_inst = scalar(_aaivaft_ep_has_inst)
+	local do_ls    = scalar(_aaivaft_ep_do_ls)
+	local do_rank  = scalar(_aaivaft_ep_do_rank)
+	local lvl      = scalar(_aaivaft_ep_level)
 
-	local hls_l  = scalar(_aaaft_ep_hls_l)
-	local hls_g  = scalar(_aaaft_ep_hls_g)
-	local hls_e  = scalar(_aaaft_ep_hls_e)
-	local ci_l_l = scalar(_aaaft_ep_ci_l_l)
-	local ci_u_l = scalar(_aaaft_ep_ci_u_l)
-	local ci_l_g = scalar(_aaaft_ep_ci_l_g)
-	local ci_u_g = scalar(_aaaft_ep_ci_u_g)
-	local ci_l_e = scalar(_aaaft_ep_ci_l_e)
-	local ci_u_e = scalar(_aaaft_ep_ci_u_e)
-	local ls_b   = scalar(_aaaft_ep_ls_b)
-	scalar drop _aaaft_ep_ls_b
-	local hls_q  = scalar(_aaaft_ep_hls_q)
-	local has_fo = scalar(_aaaft_ep_has_fo)
-	scalar drop _aaaft_ep_hls_q _aaaft_ep_has_fo
+	local hls_l  = scalar(_aaivaft_ep_hls_l)
+	local hls_g  = scalar(_aaivaft_ep_hls_g)
+	local hls_e  = scalar(_aaivaft_ep_hls_e)
+	local ci_l_l = scalar(_aaivaft_ep_ci_l_l)
+	local ci_u_l = scalar(_aaivaft_ep_ci_u_l)
+	local ci_l_g = scalar(_aaivaft_ep_ci_l_g)
+	local ci_u_g = scalar(_aaivaft_ep_ci_u_g)
+	local ci_l_e = scalar(_aaivaft_ep_ci_l_e)
+	local ci_u_e = scalar(_aaivaft_ep_ci_u_e)
+	local ls_b   = scalar(_aaivaft_ep_ls_b)
+	scalar drop _aaivaft_ep_ls_b
+	local hls_q  = scalar(_aaivaft_ep_hls_q)
+	local has_fo = scalar(_aaivaft_ep_has_fo)
+	scalar drop _aaivaft_ep_hls_q _aaivaft_ep_has_fo
 	foreach s in l g e q {
-		local cr_lo_`s' = scalar(_aaaft_ep_cr_lo_`s')
-		local cr_hi_`s' = scalar(_aaaft_ep_cr_hi_`s')
-		scalar drop _aaaft_ep_cr_lo_`s' _aaaft_ep_cr_hi_`s'
+		local cr_lo_`s' = scalar(_aaivaft_ep_cr_lo_`s')
+		local cr_hi_`s' = scalar(_aaivaft_ep_cr_hi_`s')
+		scalar drop _aaivaft_ep_cr_lo_`s' _aaivaft_ep_cr_hi_`s'
 	}
 
 	// Clean up staged scalars
-	scalar drop _aaaft_ep_hls_l  _aaaft_ep_hls_g  _aaaft_ep_hls_e  ///
-	            _aaaft_ep_ci_l_l _aaaft_ep_ci_u_l                   ///
-	            _aaaft_ep_ci_l_g _aaaft_ep_ci_u_g                   ///
-	            _aaaft_ep_ci_l_e _aaaft_ep_ci_u_e                   ///
-	            _aaaft_ep_nobs   _aaaft_ep_has_inst                  ///
-	            _aaaft_ep_do_ls  _aaaft_ep_do_rank _aaaft_ep_level
+	scalar drop _aaivaft_ep_hls_l  _aaivaft_ep_hls_g  _aaivaft_ep_hls_e  ///
+	            _aaivaft_ep_ci_l_l _aaivaft_ep_ci_u_l                   ///
+	            _aaivaft_ep_ci_l_g _aaivaft_ep_ci_u_g                   ///
+	            _aaivaft_ep_ci_l_e _aaivaft_ep_ci_u_e                   ///
+	            _aaivaft_ep_nobs   _aaivaft_ep_has_inst                  ///
+	            _aaivaft_ep_do_ls  _aaivaft_ep_do_rank _aaivaft_ep_level
 
 	tempname b V
 
 	// E(b) holds point estimates only; bounds go to e() scalars.
 	// A zero V is posted because estimates table, outreg2 and esttab
-	// require e(V); aaaft gives confidence sets, not standard errors.
+	// require e(V); aaivaft gives confidence sets, not standard errors.
 	// Pieces are added only when computed, since e(b) cannot hold missings.
 	local bvals ""
 	local bnames ""
@@ -620,7 +620,7 @@ program define _aaaft_epost, eclass
 	// Post to e()
 	ereturn post `b' `V', obs(`nobs') depname(`depvar') esample(`touse')
 
-	ereturn local  cmd         "aaaft"
+	ereturn local  cmd         "aaivaft"
 	ereturn local  depvar      "`depvar'"
 	ereturn local  treatvar    "`treatvar'"
 	ereturn local  title       "Rank-based IV AFT estimator"
@@ -642,7 +642,7 @@ program define _aaaft_epost, eclass
 		ereturn scalar CIR_lo_exponential = `cr_lo_e'
 		ereturn scalar CIR_hi_exponential = `cr_hi_e'
 		if `has_fo' {
-			ereturn local  fo          `"$AAAFT_ep_fo"'
+			ereturn local  fo          `"$AAIVAFT_ep_fo"'
 			ereturn scalar HLS_empq    = `hls_q'
 			ereturn scalar CIR_lo_empq = `cr_lo_q'
 			ereturn scalar CIR_hi_empq = `cr_hi_q'
@@ -668,7 +668,7 @@ end
 // Helper: projection P*mu via FWL
 // =============================================================================
 mata:
-matrix _aaaft_Pmu(matrix M1z, matrix Pz, matrix mu)
+matrix _aaivaft_Pmu(matrix M1z, matrix Pz, matrix mu)
 {
 	return(M1z * (Pz * (M1z' * mu)))
 }
@@ -678,7 +678,7 @@ end
 // Helper: annihilator M*mu via FWL
 // =============================================================================
 mata:
-matrix _aaaft_Mmu(matrix x, matrix Qx, matrix mu)
+matrix _aaivaft_Mmu(matrix x, matrix Qx, matrix mu)
 {
 	return(mu - x * (Qx * (x' * mu)))
 }
@@ -689,7 +689,7 @@ end
 // When a < 0, the two roots are swapped — sort them
 // =============================================================================
 mata:
-matrix _aaaft_ci(real scalar Tc,
+matrix _aaivaft_ci(real scalar Tc,
                  real scalar k2, real scalar n,  real scalar k,
                  real scalar YPY, real scalar yPY, real scalar yPy,
                  real scalar YMY, real scalar yMY, real scalar yMy)
@@ -715,7 +715,7 @@ end
 // Returns (lower, upper, edge flag, gap flag). Keeps grid values with G < gc.
 // =============================================================================
 mata:
-real rowvector _aaaft_rankcs(real colvector grid, real colvector G, real scalar gc)
+real rowvector _aaivaft_rankcs(real colvector grid, real colvector G, real scalar gc)
 {
 	real colvector acc
 	real scalar    m, lo, hi, edge, gap
@@ -738,7 +738,7 @@ end
 // draws d, with linear interpolation between order statistics
 // =============================================================================
 mata:
-real colvector _aaaft_foquant(real colvector d, real scalar n)
+real colvector _aaivaft_foquant(real colvector d, real scalar n)
 {
 	real colvector s, u, h, lo, w
 	real scalar    B
@@ -758,7 +758,7 @@ end
 // Mata function 1a: Rank IV — with instrument (original)
 // =============================================================================
 mata:
-void _aaaft_rankinf(
+void _aaivaft_rankinf(
 	string scalar sY,
 	string scalar sT,
 	string scalar sZ,
@@ -803,8 +803,8 @@ void _aaaft_rankinf(
 
 	// Empirical quantile score at ranks 1..n
 	if (hasfo) {
-		pfo = findexternal("_aaaft_fodraws")
-		s_q = _aaaft_foquant(*pfo, n)
+		pfo = findexternal("_aaivaft_fodraws")
+		s_q = _aaivaft_foquant(*pfo, n)
 	}
 
 	Rx = J(nb, 4 + hasfo, .)
@@ -881,9 +881,9 @@ void _aaaft_rankinf(
 	gc_g = sort(sim[., 2], 1)[idx]
 	gc_e = sort(sim[., 3], 1)[idx]
 
-	cs_l = _aaaft_rankcs(Rx[., 1], Rx[., 2], gc_l)
-	cs_g = _aaaft_rankcs(Rx[., 1], Rx[., 3], gc_g)
-	cs_e = _aaaft_rankcs(Rx[., 1], Rx[., 4], gc_e)
+	cs_l = _aaivaft_rankcs(Rx[., 1], Rx[., 2], gc_l)
+	cs_g = _aaivaft_rankcs(Rx[., 1], Rx[., 3], gc_g)
+	cs_e = _aaivaft_rankcs(Rx[., 1], Rx[., 4], gc_e)
 
 	st_numscalar("r(cir_l_logistic)",     cs_l[1])
 	st_numscalar("r(cir_u_logistic)",     cs_l[2])
@@ -903,7 +903,7 @@ void _aaaft_rankinf(
 
 	if (hasfo) {
 		gc_q = sort(sim[., 4], 1)[idx]
-		cs_q = _aaaft_rankcs(Rx[., 1], Rx[., 5], gc_q)
+		cs_q = _aaivaft_rankcs(Rx[., 1], Rx[., 5], gc_q)
 		st_numscalar("r(cir_l_empq)",    cs_q[1])
 		st_numscalar("r(cir_u_empq)",    cs_q[2])
 		st_numscalar("r(cir_edge_empq)", cs_q[3])
@@ -920,7 +920,7 @@ end
 // residualized on the covariates, as in the paper
 // =============================================================================
 mata:
-void _aaaft_rankinf_noinst(
+void _aaivaft_rankinf_noinst(
 	string scalar sY,
 	string scalar sT,
 	string scalar sX,
@@ -951,7 +951,7 @@ void _aaaft_rankinf_noinst(
 	RYdd = M1Y :- mean(M1Y)
 	RYss = (RYdd' * RYdd)[1,1]
 
-	// Deterministic tie-breaking (same rationale as _aaaft_rankinf)
+	// Deterministic tie-breaking (same rationale as _aaivaft_rankinf)
 	jitter = (1::n) :* (1e-12)
 
 	Rx = J(nb, 4, .)
@@ -996,7 +996,7 @@ end
 // Mata function 2: Least-Squares IV  [FAST] — requires instrument
 // =============================================================================
 mata:
-void _aaaft_leastsquares(
+void _aaivaft_leastsquares(
 	string scalar sY,
 	string scalar sT,
 	string scalar sZ,
@@ -1041,16 +1041,16 @@ void _aaaft_leastsquares(
 	mu_g = -ln(-ln(U))
 	mu_e = -ln(1 :- U)
 
-	Pmu_l = _aaaft_Pmu(M1zs, Pz, mu_l)
-	Mmu_l = _aaaft_Mmu(xs, Qx, mu_l)
+	Pmu_l = _aaivaft_Pmu(M1zs, Pz, mu_l)
+	Mmu_l = _aaivaft_Mmu(xs, Qx, mu_l)
 	GAR_l = (colsum(Pmu_l :* mu_l) :/ colsum(Mmu_l :* mu_l)) :* ((n-k)/k2)
 
-	Pmu_g = _aaaft_Pmu(M1zs, Pz, mu_g)
-	Mmu_g = _aaaft_Mmu(xs, Qx, mu_g)
+	Pmu_g = _aaivaft_Pmu(M1zs, Pz, mu_g)
+	Mmu_g = _aaivaft_Mmu(xs, Qx, mu_g)
 	GAR_g = (colsum(Pmu_g :* mu_g) :/ colsum(Mmu_g :* mu_g)) :* ((n-k)/k2)
 
-	Pmu_e = _aaaft_Pmu(M1zs, Pz, mu_e)
-	Mmu_e = _aaaft_Mmu(xs, Qx, mu_e)
+	Pmu_e = _aaivaft_Pmu(M1zs, Pz, mu_e)
+	Mmu_e = _aaivaft_Mmu(xs, Qx, mu_e)
 	GAR_e = (colsum(Pmu_e :* mu_e) :/ colsum(Mmu_e :* mu_e)) :* ((n-k)/k2)
 
 	Tc_l = sort(GAR_l', 1)[idx, 1]
@@ -1073,9 +1073,9 @@ void _aaaft_leastsquares(
 	// LS IV point estimate, the value of beta where GAR is zero
 	beta_ls = yPY / YPY
 
-	ci_l = _aaaft_ci(Tc_l, k2, n, k, YPY, yPY, yPy, YMY, yMY, yMy)
-	ci_g = _aaaft_ci(Tc_g, k2, n, k, YPY, yPY, yPy, YMY, yMY, yMy)
-	ci_e = _aaaft_ci(Tc_e, k2, n, k, YPY, yPY, yPy, YMY, yMY, yMy)
+	ci_l = _aaivaft_ci(Tc_l, k2, n, k, YPY, yPY, yPy, YMY, yMY, yMy)
+	ci_g = _aaivaft_ci(Tc_g, k2, n, k, YPY, yPY, yPy, YMY, yMY, yMy)
+	ci_e = _aaivaft_ci(Tc_e, k2, n, k, YPY, yPY, yPy, YMY, yMY, yMy)
 
 	st_numscalar("r(ci_l_logistic)",   ci_l[1])
 	st_numscalar("r(ci_u_logistic)",   ci_l[2])

@@ -1,10 +1,10 @@
 cff-version: 1.2.0
-message: "If you use aaaft, please cite it as below."
-title: "aaaft: Rank-based instrumental variables inference for accelerated failure time models in Stata"
+message: "If you use aaivaft, please cite it as below."
+title: "aaivaft: Rank-based instrumental variables inference for accelerated failure time models in Stata"
 version: 1.0.0
 date-released: 2026-10-19
 license: MIT
-repository-code: "https://github.com/lfsanche/aaaft"
+repository-code: "https://github.com/lfsanche/aaivaft"
 keywords:
   - Stata
   - instrumental variables

@@ -1,7 +1,7 @@
 # Patient-level data must never be committed
 HE_*.dta
 *.dta
-!data/aaaft_example.dta
+!data/aaivaft_example.dta
 
 # Outputs
 output/

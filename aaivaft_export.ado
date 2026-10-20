@@ -1,22 +1,22 @@
 *! version 1.0.0  19oct2026
-*! aaaft_export: writes aaaft results to a CSV file
-*! Companion to aaaft.ado; called by aaaft's export() option or run by itself
-*! after aaaft. Syntax: aaaft_export using filename[.csv] [, replace]
+*! aaivaft_export: writes aaivaft results to a CSV file
+*! Companion to aaivaft.ado; called by aaivaft's export() option or run by itself
+*! after aaivaft. Syntax: aaivaft_export using filename[.csv] [, replace]
 
 // =============================================================================
-// aaaft_export: export aaaft results to a CSV file
-// Syntax: aaaft_export using filename[.csv] [, replace]
-// Reads from e() after aaaft. One row per score with the HLS point, the rank
+// aaivaft_export: export aaivaft results to a CSV file
+// Syntax: aaivaft_export using filename[.csv] [, replace]
+// Reads from e() after aaivaft. One row per score with the HLS point, the rank
 // confidence set, the LS point and the LS confidence set. Empty cells mark
 // results that were not computed. A name without .csv gets the .csv suffix.
 // =============================================================================
-program define aaaft_export
+program define aaivaft_export
     version 14.0
 
     syntax using/ [, replace]
 
-    if "`e(cmd)'" != "aaaft" {
-        di as error "Last estimation command was not aaaft."
+    if "`e(cmd)'" != "aaivaft" {
+        di as error "Last estimation command was not aaivaft."
         exit 301
     }
 
@@ -27,7 +27,7 @@ program define aaaft_export
     }
     else if lower("`suf'") != ".csv" {
         mata: st_local("using", pathrmsuffix(st_local("using")) + ".csv")
-        di as txt " Note: aaaft_export writes CSV; file saved as " as res `""`using'""'
+        di as txt " Note: aaivaft_export writes CSV; file saved as " as res `""`using'""'
     }
 
     capture confirm file `"`using'"'
@@ -52,7 +52,7 @@ program define aaaft_export
     file write `fh' "score,hls,rank_lo,rank_hi,ls_point,ls_lo,ls_hi,"
     file write `fh' "depvar,treatvar,instrument,N,level" _n
 
-    // Add the empirical quantile row when aaaft was run with fo()
+    // Add the empirical quantile row when aaivaft was run with fo()
     local scores "logistic gumbel exponential"
     if !missing(e(HLS_empq)) local scores "`scores' empq"
 
