@@ -2,27 +2,27 @@
 {* *! version 1.0.0  19oct2026  Sánchez-Aragón, Acharya, Menon, and Voia}{...}
 {vieweralsosee "[ST] streg" "help streg"}{...}
 {vieweralsosee "[R] ivregress" "help ivregress"}{...}
-{viewerjumpto "Syntax" "aaivaft##syntax"}{...}
-{viewerjumpto "Description" "aaivaft##description"}{...}
-{viewerjumpto "Options" "aaivaft##options"}{...}
-{viewerjumpto "Remarks" "aaivaft##remarks"}{...}
-{viewerjumpto "Exporting results" "aaivaft##export"}{...}
-{viewerjumpto "Stored results" "aaivaft##results"}{...}
-{viewerjumpto "Examples" "aaivaft##examples"}{...}
-{viewerjumpto "References" "aaivaft##references"}{...}
-{viewerjumpto "Authors" "aaivaft##authors"}{...}
+{viewerjumpto "Syntax" "aaaft##syntax"}{...}
+{viewerjumpto "Description" "aaaft##description"}{...}
+{viewerjumpto "Options" "aaaft##options"}{...}
+{viewerjumpto "Remarks" "aaaft##remarks"}{...}
+{viewerjumpto "Exporting results" "aaaft##export"}{...}
+{viewerjumpto "Stored results" "aaaft##results"}{...}
+{viewerjumpto "Examples" "aaaft##examples"}{...}
+{viewerjumpto "References" "aaaft##references"}{...}
+{viewerjumpto "Authors" "aaaft##authors"}{...}
 
 {title:Title}
 
 {phang}
-{bf:aaivaft} {hline 2} Rank-based instrumental variables inference for accelerated failure time models
+{bf:aaaft} {hline 2} Rank-based instrumental variables inference for accelerated failure time models
 
 
 {marker syntax}{...}
 {title:Syntax}
 
 {p 8 17 2}
-{cmdab:aaivaft}
+{cmdab:aaaft}
 {depvar}
 {it:treatvar}
 {it:covariates}
@@ -69,9 +69,9 @@ control variables. All variables must be numeric. At least one covariate is
 required.{p_end}
 
 {p 4 6 2}
-{cmd:aaivaft} requires the {cmd:moremata} package:
+{cmd:aaaft} requires the {cmd:moremata} package:
 {stata ssc install moremata}. The command is made of two files,
-{cmd:aaivaft.ado} and {cmd:aaivaft_export.ado}, which must sit in the same
+{cmd:aaaft.ado} and {cmd:aaaft_export.ado}, which must sit in the same
 folder on the ado path.{p_end}
 
 
@@ -79,7 +79,7 @@ folder on the ado path.{p_end}
 {title:Description}
 
 {pstd}
-{cmd:aaivaft} implements rank-based instrumental variables (IV) inference for
+{cmd:aaaft} implements rank-based instrumental variables (IV) inference for
 accelerated failure time (AFT) duration models. It follows the framework of
 Acharya, Khalaf, Menon, Voia, Yazbeck, and Wensley (2026). The rank
 confidence sets are exact and robust to weak instruments.
@@ -96,7 +96,7 @@ where {it:beta} is the scalar coefficient on the endogenous treatment,
 error term with unspecified distribution.
 
 {pstd}
-With {cmd:instrument()}, {cmd:aaivaft} reports four sets of results:
+With {cmd:instrument()}, {cmd:aaaft} reports four sets of results:
 
 {phang2}
 1. Hodges-Lehmann-Sen (HLS) point estimates. For each candidate {it:beta},
@@ -125,7 +125,7 @@ value is simulated with errors drawn from the distribution of each score,
 so these sets are exact only if the errors follow that distribution.
 
 {pstd}
-Without {cmd:instrument()}, {cmd:aaivaft} runs in rank-only mode. The scores
+Without {cmd:instrument()}, {cmd:aaaft} runs in rank-only mode. The scores
 are projected on the treatment residualized on the covariates instead of on
 the instrument. The command reports HLS point estimates with no IV correction
 and no confidence sets. This lets you compare naive rank estimates with IV
@@ -140,7 +140,7 @@ estimates.
 {phang}
 {opth instrument(varname)} specifies the instrument for {it:treatvar}. The
 instrument must be numeric, exogenous, and correlated with {it:treatvar}.
-Without it, {cmd:aaivaft} computes rank point estimates only.
+Without it, {cmd:aaaft} computes rank point estimates only.
 
 {dlgtab:Grid}
 
@@ -163,7 +163,7 @@ confidence bounds are only as precise as this step. Default is {cmd:0.01};
 {opth reps(#)} sets the number of simulation draws used for the critical
 values of both the rank and the LS confidence sets. It must be at least 100.
 Default is {cmd:1000}, which is fine for exploration. For published results
-{cmd:reps(5000)} or more is recommended; see {help aaivaft##mc:Monte Carlo error}.
+{cmd:reps(5000)} or more is recommended; see {help aaaft##mc:Monte Carlo error}.
 
 {phang}
 {opth level(#)} sets the confidence level of the rank and LS confidence sets.
@@ -179,7 +179,7 @@ on the sort order of the data.
 {phang}
 {opt fo(filename)} names a Stata dataset with draws of the error
 {it:epsilon}, for example simulated draws of a baseline and frailty
-convolution. {cmd:aaivaft} builds the empirical distribution Fo of these draws
+convolution. {cmd:aaaft} builds the empirical distribution Fo of these draws
 and adds the score c(u) = Fo{sup:-1}(u). The score is used for the HLS
 estimate and for the rank confidence set; it requires {cmd:instrument()}. At
 least 1,000 nonmissing draws are needed; 100,000 or more is recommended.
@@ -211,7 +211,7 @@ time when only the rank results are needed.
 
 {phang}
 {opt export(filename)} writes the results to {it:filename} as a CSV file,
-one row per score; see {help aaivaft##export:Exporting results}. Any existing
+one row per score; see {help aaaft##export:Exporting results}. Any existing
 file is overwritten. A name without an extension gets {cmd:.csv}, and any
 other extension is replaced by {cmd:.csv}.
 
@@ -257,7 +257,7 @@ scale.
 The rank confidence set is exact for any score fixed in advance. When Fo is
 calibrated with parameters estimated from the same sample, the score depends
 on the data and the set is exact only conditionally on that calibration. A
-split sample, with Fo calibrated on one part and {cmd:aaivaft} run on the
+split sample, with Fo calibrated on one part and {cmd:aaaft} run on the
 other, keeps exactness.
 
 {pstd}
@@ -276,7 +276,7 @@ and largest values kept. An empty set means that no grid value is kept.
 
 {pstd}
 When {it:treatvar} is discrete, such as an integer severity score, the
-residuals ln(T) - {it:beta}*{it:treatvar} can have ties. {cmd:aaivaft} adds a
+residuals ln(T) - {it:beta}*{it:treatvar} can have ties. {cmd:aaaft} adds a
 tiny deterministic jitter, 1e-12 times the observation index, to break them.
 In the pediatric ICU application the point estimates and rank confidence
 sets do not change when the data are sorted in different random orders.
@@ -308,7 +308,7 @@ region of interest.
 {ul:Censored durations}
 
 {pstd}
-{cmd:aaivaft} treats every duration as observed and does not adjust for
+{cmd:aaaft} treats every duration as observed and does not adjust for
 censoring. It suits data where all durations are complete. With censored
 durations the rank test keeps its size, but the point estimate is biased.
 
@@ -317,12 +317,12 @@ durations the rank test keeps its size, but the point estimate is biased.
 {title:Exporting results}
 
 {pstd}
-{cmd:aaivaft_export} writes the results of the last {cmd:aaivaft} estimation to a
-CSV file. It reads from {cmd:e()}, so it must be run after {cmd:aaivaft}. The
+{cmd:aaaft_export} writes the results of the last {cmd:aaaft} estimation to a
+CSV file. It reads from {cmd:e()}, so it must be run after {cmd:aaaft}. The
 {cmd:export()} option calls it automatically.
 
 {p 8 17 2}
-{cmd:aaivaft_export}
+{cmd:aaaft_export}
 {cmd:using} {it:filename}
 [{cmd:,} {opt replace}]
 
@@ -339,7 +339,7 @@ for results that were not computed. The file can be read back with
 {title:Stored results}
 
 {pstd}
-{cmd:aaivaft} stores the following in {cmd:r()}, where {it:s} is
+{cmd:aaaft} stores the following in {cmd:r()}, where {it:s} is
 {cmd:logistic}, {cmd:gumbel}, or {cmd:exponential}:
 
 {synoptset 24 tabbed}{...}
@@ -368,7 +368,7 @@ The rank set results need {cmd:instrument()} and no {cmd:norank}. The LS
 results need {cmd:instrument()} and no {cmd:nols}.
 
 {pstd}
-{cmd:aaivaft} also stores the following in {cmd:e()}, so results work with
+{cmd:aaaft} also stores the following in {cmd:e()}, so results work with
 {cmd:estimates table}, {cmd:estimates store}, {cmd:outreg2}, and {cmd:esttab}:
 
 {synoptset 24 tabbed}{...}
@@ -383,7 +383,7 @@ results need {cmd:instrument()} and no {cmd:nols}.
 {synopt:{cmd:e(CI_hi_}{it:s}{cmd:)}}upper bound of LS confidence set{p_end}
 
 {p2col 5 24 28 2: Macros}{p_end}
-{synopt:{cmd:e(cmd)}}{cmd:aaivaft}{p_end}
+{synopt:{cmd:e(cmd)}}{cmd:aaaft}{p_end}
 {synopt:{cmd:e(depvar)}}name of dependent variable{p_end}
 {synopt:{cmd:e(treatvar)}}name of treatment variable{p_end}
 {synopt:{cmd:e(instrument)}}name of instrument, if specified{p_end}
@@ -400,7 +400,7 @@ results need {cmd:instrument()} and no {cmd:nols}.
 
 {pstd}
 {cmd:e(b)} holds only the point estimates that were computed. {cmd:e(V)} is a
-zero matrix because {cmd:aaivaft} reports confidence sets, not standard errors;
+zero matrix because {cmd:aaaft} reports confidence sets, not standard errors;
 it is posted only because {cmd:estimates table} and similar commands require
 it. Do not read it as a measure of precision.
 
@@ -411,31 +411,31 @@ it. Do not read it as a measure of precision.
 {pstd}
 {ul:IV estimation with reproducible confidence sets}
 
-{phang2}{cmd:. aaivaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) reps(5000) seed(12345)}{p_end}
+{phang2}{cmd:. aaaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) reps(5000) seed(12345)}{p_end}
 
 {pstd}
 {ul:Rank estimates only, no instrument}
 
-{phang2}{cmd:. aaivaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, gridmin(0.05) gridmax(0.50) gridstep(0.005)}{p_end}
+{phang2}{cmd:. aaaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, gridmin(0.05) gridmax(0.50) gridstep(0.005)}{p_end}
 
 {pstd}
 {ul:Rank results only, faster}
 
-{phang2}{cmd:. aaivaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) seed(12345) nols}{p_end}
+{phang2}{cmd:. aaaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) seed(12345) nols}{p_end}
 
 {pstd}
 {ul:Compare naive and IV rank estimates}
 
-{phang2}{cmd:. aaivaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, gridmin(0.05) gridmax(0.50) gridstep(0.005)}{p_end}
+{phang2}{cmd:. aaaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, gridmin(0.05) gridmax(0.50) gridstep(0.005)}{p_end}
 {phang2}{cmd:. scalar beta_noiv = r(beta_logistic)}{p_end}
-{phang2}{cmd:. aaivaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) seed(12345)}{p_end}
+{phang2}{cmd:. aaaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) seed(12345)}{p_end}
 {phang2}{cmd:. scalar beta_iv = r(beta_logistic)}{p_end}
 {phang2}{cmd:. display "Endogeneity correction: " beta_iv - beta_noiv}{p_end}
 
 {pstd}
 {ul:Empirical quantile score from simulated error draws in eps_draws.dta}
 
-{phang2}{cmd:. aaivaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) reps(5000) seed(12345) fo("eps_draws.dta")}{p_end}
+{phang2}{cmd:. aaaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) reps(5000) seed(12345) fo("eps_draws.dta")}{p_end}
 
 {pstd}
 {ul:Tabulate point estimates}
@@ -446,12 +446,12 @@ it. Do not read it as a measure of precision.
 {pstd}
 {ul:Estimate and export in one step}
 
-{phang2}{cmd:. aaivaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) seed(12345) export("prism.csv")}{p_end}
+{phang2}{cmd:. aaaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, instrument(Trauma) gridmin(0.05) gridmax(0.50) gridstep(0.005) seed(12345) export("prism.csv")}{p_end}
 
 {pstd}
 {ul:Export the last estimation without rerunning it}
 
-{phang2}{cmd:. aaivaft_export using "prism.csv", replace}{p_end}
+{phang2}{cmd:. aaaft_export using "prism.csv", replace}{p_end}
 {phang2}{cmd:. import delimited using "prism.csv", clear}{p_end}
 
 

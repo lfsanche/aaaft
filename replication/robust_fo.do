@@ -1,13 +1,13 @@
 * robust_fo.do
-* Robustez del score de cuantil empírico de aaivaft a la calibración de Fo.
-* Requiere aaivaft versión 1.0.0 o posterior.
+* Robustez del score de cuantil empírico de aaaft a la calibración de Fo.
+* Requiere aaaft versión 1.0.0 o posterior.
 * Calibraciones (error de ln T: eps = sigma_g * (W - ln(alpha))):
 *   base    : sigma_g y theta_g estimados por hospital (como calibrate_fo.do)
 *   pooled  : un solo modelo, sigma y theta comunes a todos los hospitales
 *   theta1  : sigma_g por hospital, theta = 1 (mezcla de logísticas)
 *   theta_x2: sigma_g por hospital, theta_g al doble
 *   theta_x05: sigma_g por hospital, theta_g a la mitad
-*   split   : base calibrado en una mitad de la muestra, aaivaft en la otra
+*   split   : base calibrado en una mitad de la muestra, aaaft en la otra
 *             (conserva la exactitud; se compara con el logístico en esa mitad)
 
 clear all
@@ -115,9 +115,9 @@ foreach sev in PRISM PIM {
     di as txt "`sev' pooled: sigma = " as res %6.4f sig1 as txt "  theta = " as res %6.4f th1
     sim_fo "`out'\rob_`sev'_pooled.dta"
 
-    * --- aaivaft con cada calibración en la muestra completa
+    * --- aaaft con cada calibración en la muestra completa
     foreach c in base pooled theta1 thx2 thx05 {
-        quietly aaivaft lnlosh `sev' hsp1-hsp6 `covs', `opts' ///
+        quietly aaaft lnlosh `sev' hsp1-hsp6 `covs', `opts' ///
             fo("`out'\rob_`sev'_`c'.dta")
         post h ("`sev'") ("`c'") (e(HLS_empq)) (e(CIR_lo_empq)) (e(CIR_hi_empq)) ///
             (e(HLS_logistic)) (e(CIR_lo_logistic)) (e(CIR_hi_logistic))
@@ -128,7 +128,7 @@ foreach sev in PRISM PIM {
     gen byte half = runiform() < 0.5
     calib_hosp `sev' "`covs'" "if half == 1"
     sim_fo "`out'\rob_`sev'_split.dta"
-    quietly aaivaft lnlosh `sev' hsp1-hsp6 `covs' if half == 0, `opts' ///
+    quietly aaaft lnlosh `sev' hsp1-hsp6 `covs' if half == 0, `opts' ///
         fo("`out'\rob_`sev'_split.dta")
     post h ("`sev'") ("split") (e(HLS_empq)) (e(CIR_lo_empq)) (e(CIR_hi_empq)) ///
         (e(HLS_logistic)) (e(CIR_lo_logistic)) (e(CIR_hi_logistic))

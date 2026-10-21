@@ -1,5 +1,5 @@
 * calibrate_fo.do
-* Construye las realizaciones del error para el score de cuantil empírico de aaivaft.
+* Construye las realizaciones del error para el score de cuantil empírico de aaaft.
 * Modelo: AFT Weibull con fragilidad Gamma, estimado por separado en cada
 * hospital (streg no admite ancillary() junto con frailty()).
 * Error de ln(T): eps = sigma_g * (W - ln(alpha))
@@ -84,14 +84,14 @@ foreach sev in PRISM PIM {
 }
 
 * -------------------------------------------------------------
-* 3. aaivaft con el score de cuantil empírico
+* 3. aaaft con el score de cuantil empírico
 * -------------------------------------------------------------
 use "`data'", clear
 
-aaivaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, ///
+aaaft lnlosh PRISM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, ///
     instrument(Trauma) gridmin(0.01) gridmax(0.60) gridstep(0.005) ///
     reps(5000) seed(12345) nols fo("`out'\fo_PRISM.dta")
 
-aaivaft lnlosh PIM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, ///
+aaaft lnlosh PIM hsp1-hsp6 Agecat Cardiac Nchrnx PrevICU, ///
     instrument(Trauma) gridmin(0.01) gridmax(0.60) gridstep(0.005) ///
     reps(5000) seed(12345) nols fo("`out'\fo_PIM.dta")

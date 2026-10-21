@@ -1,5 +1,5 @@
 v 3
-d aaivaft: rank-based IV inference for accelerated failure time models
+d aaaft: rank-based IV inference for accelerated failure time models
 d
 d Estimates the effect of an endogenous treatment on a duration in an
 d accelerated failure time model with a binary instrument. Reports
@@ -16,8 +16,8 @@ d
 d Distribution-Date: 20261019
 d Version: 1.0.0
 d
-f aaivaft.ado
-f aaivaft_export.ado
-f aaivaft.sthlp
-a examples/aaivaft_example.do
-a data/aaivaft_example.dta
+f aaaft.ado
+f aaaft_export.ado
+f aaaft.sthlp
+a examples/aaaft_example.do
+a data/aaaft_example.dta
