@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.0.0  19oct2026  Sánchez-Aragón, Acharya, Menon, and Voia}{...}
+{* *! version 1.1.0  22oct2026  Sánchez-Aragón, Acharya, Menon, and Voia}{...}
 {vieweralsosee "[ST] streg" "help streg"}{...}
 {vieweralsosee "[R] ivregress" "help ivregress"}{...}
 {viewerjumpto "Syntax" "aaaft##syntax"}{...}
@@ -128,8 +128,9 @@ so these sets are exact only if the errors follow that distribution.
 Without {cmd:instrument()}, {cmd:aaaft} runs in rank-only mode. The scores
 are projected on the treatment residualized on the covariates instead of on
 the instrument. The command reports HLS point estimates with no IV correction
-and no confidence sets. This lets you compare naive rank estimates with IV
-estimates.
+and no confidence sets. With {cmd:fo()}, it also reports the HLS estimate
+for the empirical quantile score. This lets you compare naive rank
+estimates with IV estimates under the same scores.
 
 
 {marker options}{...}
@@ -181,7 +182,8 @@ on the sort order of the data.
 {it:epsilon}, for example simulated draws of a baseline and frailty
 convolution. {cmd:aaaft} builds the empirical distribution Fo of these draws
 and adds the score c(u) = Fo{sup:-1}(u). The score is used for the HLS
-estimate and for the rank confidence set; it requires {cmd:instrument()}. At
+estimate, with or without {cmd:instrument()}, and, with {cmd:instrument()},
+for the rank confidence set. At
 least 1,000 nonmissing draws are needed; 100,000 or more is recommended.
 
 {phang}

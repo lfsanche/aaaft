@@ -1,7 +1,7 @@
 # aaaft: rank-based IV inference for accelerated failure time models in Stata
 
 [![Stata 14+](https://img.shields.io/badge/Stata-14%2B-1a5f91)](https://www.stata.com)
-[![Version](https://img.shields.io/badge/version-1.0.0-2e7d32)](#version-history)
+[![Version](https://img.shields.io/badge/version-1.1.0-2e7d32)](#version-history)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 `aaaft` estimates the effect of an endogenous treatment on a duration. It works with accelerated failure time (AFT) models and a binary instrument. Its confidence sets are exact and remain valid when the instrument is weak. It does not assume a distribution for the baseline duration or for the frailty.
@@ -30,7 +30,7 @@ For each score, `aaaft` reports two rank results and, as a comparator, two least
 3. The least squares IV point estimate.
 4. The least squares confidence set from the generalized Anderson Rubin statistic. It is exact only if the errors follow the distribution of the score.
 
-The scores are the logistic, the Gumbel, and the exponential. With the option `fo()`, the command adds an empirical quantile score built from draws of the error that the user supplies. Without an instrument, the command reports a rank only benchmark that ignores endogeneity. The gap between the two estimates shows the direction and size of the endogeneity bias.
+The scores are the logistic, the Gumbel, and the exponential. With the option `fo()`, the command adds an empirical quantile score built from draws of the error that the user supplies. Without an instrument, the command reports a rank only benchmark that ignores endogeneity, for the same scores, including the empirical quantile score with `fo()`. The gap between the two estimates shows the direction and size of the endogeneity bias.
 
 The command treats every duration as observed and does not adjust for censoring. It suits data where all durations are complete, as in the ICU application of the paper. With censored durations the rank test keeps its size, but the point estimate is biased.
 
@@ -168,6 +168,8 @@ If you use `aaaft`, please cite the article and the method.
 ```
 
 ## Version history
+
+1.1.0 (October 2026). The empirical quantile score from `fo()` is also available in the rank only benchmark, without an instrument.
 
 1.0.0 (October 2026). First public release. Rank IV estimates and simulated rank confidence sets under the logistic, Gumbel, exponential, and empirical quantile scores; least squares IV comparator; rank only benchmark; CSV export.
 

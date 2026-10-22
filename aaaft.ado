@@ -1,4 +1,4 @@
-*! version 1.0.0  19oct2026
+*! version 1.1.0  22oct2026
 *! aaaft: rank-based IV inference for accelerated failure time models
 *! Authors: Sanchez-Aragon, Acharya, Menon, and Voia
 *! Based on: Acharya, Khalaf, Menon, Voia, Yazbeck, and Wensley (2026), Canadian Journal of Economics, forthcoming
@@ -246,9 +246,9 @@ program define aaaft, rclass
 	// -------------------------------------------------------------------------
 	// Rank estimator
 	// -------------------------------------------------------------------------
-	// Fo() only applies to the rank IV estimates
-	if `has_fo' & (!`has_inst' | "`rank'" != "") {
-		di as txt " Note: fo() is used only with instrument() and without norank; ignored."
+	// fo() applies to the rank estimates, with or without an instrument
+	if `has_fo' & "`rank'" != "" {
+		di as txt " Note: fo() is not used with norank; ignored."
 		local has_fo 0
 	}
 	local sq ""
@@ -280,7 +280,8 @@ program define aaaft, rclass
 				"`_aaaft_X'",				///
 				"_aaaft_gmin",				///
 				"_aaaft_gmax",				///
-				"_aaaft_gstep"				///
+				"_aaaft_gstep",				///
+				`has_fo'					///
 			)
 		}
 	}
@@ -479,6 +480,9 @@ program define aaaft, rclass
 	else {
 		di as txt " Note: No instrument supplied. Only rank point estimates shown."
 		di as txt " To obtain confidence sets, supply instrument() option."
+		if `has_fo' {
+			di as txt `" Empirical quantile score: `fo_n' draws of `fovar' from `fo'"'
+		}
 	}
 	di as txt "{hline 60}"
 
@@ -642,11 +646,14 @@ program define _aaaft_epost, eclass
 		ereturn scalar CIR_lo_exponential = `cr_lo_e'
 		ereturn scalar CIR_hi_exponential = `cr_hi_e'
 		if `has_fo' {
-			ereturn local  fo          `"$AAAFT_ep_fo"'
-			ereturn scalar HLS_empq    = `hls_q'
 			ereturn scalar CIR_lo_empq = `cr_lo_q'
 			ereturn scalar CIR_hi_empq = `cr_hi_q'
 		}
+	}
+	// Empirical quantile HLS estimate, with or without an instrument
+	if `do_rank' & `has_fo' {
+		ereturn local  fo          `"$AAAFT_ep_fo"'
+		ereturn scalar HLS_empq    = `hls_q'
 	}
 
 	if `has_inst' & `do_ls' {
@@ -926,7 +933,8 @@ void _aaaft_rankinf_noinst(
 	string scalar sX,
 	string scalar sgmin,
 	string scalar sgmax,
-	string scalar sgstep
+	string scalar sgstep,
+	real scalar   hasfo
 )
 {
 	y  = st_matrix(sY)
@@ -954,7 +962,13 @@ void _aaaft_rankinf_noinst(
 	// Deterministic tie-breaking (same rationale as _aaaft_rankinf)
 	jitter = (1::n) :* (1e-12)
 
-	Rx = J(nb, 4, .)
+	// Empirical quantile score at ranks 1..n
+	if (hasfo) {
+		pfo = findexternal("_aaaft_fodraws")
+		s_q = _aaaft_foquant(*pfo, n)
+	}
+
+	Rx = J(nb, 4 + hasfo, .)
 
 	for (i = 1; i <= nb; i++) {
 		E  = M1y - M1Y * grid[i] + jitter
@@ -974,6 +988,10 @@ void _aaaft_rankinf_noinst(
 		Rx[i, 2] = RYcl^2 / RYss
 		Rx[i, 3] = RYcg^2 / RYss
 		Rx[i, 4] = RYce^2 / RYss
+		if (hasfo) {
+			c_q = s_q[round(R)]
+			Rx[i, 5] = ((RYdd' * c_q)[1,1])^2 / RYss
+		}
 	}
 
 	// Use direct minimum search — robust to ties
@@ -988,6 +1006,10 @@ void _aaaft_rankinf_noinst(
 	st_numscalar("r(beta_logistic)",  beta_l)
 	st_numscalar("r(beta_gumbel)",    beta_g)
 	st_numscalar("r(beta_exponential)", beta_e)
+	if (hasfo) {
+		idx_q  = selectindex(Rx[.,5] :== min(Rx[.,5]))
+		st_numscalar("r(beta_empq)", mean(Rx[idx_q, 1]))
+	}
 }
 end
 
