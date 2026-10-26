@@ -14,7 +14,7 @@ Keywords: Stata, econometrics, instrumental variables, weak instruments, duratio
 
 | Author | Affiliation | Contact |
 |---|---|---|
-| Leonardo Sánchez-Aragón | ESPOL Polytechnic University, Guayaquil, Ecuador | [lfsanche@espol.edu.ec](mailto:lfsanche@espol.edu.ec) |
+| Leonardo Sánchez-Aragón | Facultad de Ciencias Sociales y Humanísticas, Escuela Superior Politécnica del Litoral (ESPOL), Guayaquil, Ecuador | [lfsanche@espol.edu.ec](mailto:lfsanche@espol.edu.ec) |
 | Anand Acharya (deceased) | Carleton University, Ottawa, Canada | |
 | Kusum Menon | University of Ottawa, Ottawa, Canada | [KMenon@cheo.on.ca](mailto:KMenon@cheo.on.ca) |
 | Marcel Voia | Université d'Orléans, France, and University of Bucharest, Romania | [marcel.voia@univ-orleans.fr](mailto:marcel.voia@univ-orleans.fr) |
