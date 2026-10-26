@@ -160,7 +160,7 @@ If you use `aaaft`, please cite the article and the method.
 
 @article{acharya2026,
   author  = {Acharya, Anand and Khalaf, Lynda and Menon, Kusum and Voia, Marcel and Yazbeck, Myra and Wensley, David},
-  title   = {Robust Duration Inference and Bias in Allocating Critical Hospital Resources},
+  title   = {Reducing Bias in Pediatric Critical Care Allocation: Evidence from Canadian Hospitals using Robust Instrumental Variable Duration Models},
   journal = {Canadian Journal of Economics},
   year    = {2026},
   note    = {Forthcoming}

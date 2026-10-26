@@ -30,7 +30,7 @@ authors:
     email: "marcel.voia@univ-orleans.fr"
 references:
   - type: article
-    title: "Robust Duration Inference and Bias in Allocating Critical Hospital Resources"
+    title: "Reducing Bias in Pediatric Critical Care Allocation: Evidence from Canadian Hospitals using Robust Instrumental Variable Duration Models"
     journal: "Canadian Journal of Economics"
     year: 2026
     authors:
